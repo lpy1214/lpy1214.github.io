@@ -4,26 +4,29 @@
   
   
   <entry>
-    <title>Hello World</title>
-    <link href="/2022/04/18/hello-world/"/>
-    <url>/2022/04/18/hello-world/</url>
+    <title>RPC</title>
+    <link href="/2022/04/18/RPC/"/>
+    <url>/2022/04/18/RPC/</url>
     
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
-    
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>lpy</title>
-    <link href="/2022/04/18/lpy/"/>
-    <url>/2022/04/18/lpy/</url>
-    
-    <content type="html"><![CDATA[<p>sad asdas sad asdasdsahfkjhafkjhakj</p>]]></content>
+    <content type="html"><![CDATA[<h5 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h5><p>调用远程计算机上的服务，就像调用本地服务一样。RPC可以很好的解耦系统。</p><h5 id="核心流程"><a href="#核心流程" class="headerlink" title="核心流程"></a>核心流程</h5><ol><li>服务消费方（client）调用以本地调用方式调用服务。</li><li>client stub 接收到调用后负责将方法、参数等组装成能够进行网络传输的消息体。</li><li>client stub 找到服务地址，并将消息发送到服务端。</li><li>server stub 收到消息后进行解码。</li><li>server stub 根据解码结果调用本地的服务。</li><li>本地服务执行并将结果返回给server stub。</li><li>server stub 将返回结果打包成消息发送给消费端。</li><li>服务消费放得到最终结果。</li></ol><h5 id="关键技术"><a href="#关键技术" class="headerlink" title="关键技术"></a>关键技术</h5><ol><li><p>java的动态代理</p><p>基于动态代理生成代理对象，当带哦用代理对象的方法时，由代理及逆行相关信息的组装，并发送到服务器进行远程调用，并由代理接收调用结果并返回。</p><ul><li>通过实现InvocationHandler接口创建自己的调用处理器</li><li>通过为Proxy类指定ClassLoader对象和一组interface来创建动态代理类</li><li>通过反射机制获得动态代理类的构造参数，其唯一参数类型就是调用处理器接口类型</li><li>通过构造函数创建动态代理类实例，构造时调用处理器对象作为参数被传入。</li></ul><p>动态代理的核心是反射机制。</p></li><li><p>netty网络通信</p></li><li><p>消息序列化</p><ul><li><p>json 是一种轻量级的数据交换语言。json由于采用字符方式存储，占用相对于字节方式较大，并且序列化后类的信息会丢失，可能导致反序列化失败。</p></li><li><p>kryo 是一种快速高效的java序列化框架，旨在提供快速、高效和易用的API，无论文件、数据库或网络数据kryo都可以随时完成序列化，kryo还可以执行自动深拷贝、浅拷贝，这是对象到对象的直接拷贝，而不是对象-&gt;字节-&gt;对象的拷贝。并且序列化后体积较小。</p></li></ul></li></ol><h5 id="消息协议"><a href="#消息协议" class="headerlink" title="消息协议"></a>消息协议</h5><p>magic number： 标识是一个协议包，4 bytes</p><p>package number：标明是request或者是response的包，4 bytes</p><p>serialize number：标明用哪一种序列化方式，4 bytes</p><p>data length：数据长度，为了解决沾包问题。4 bytes</p><p>data： 传输数据。</p>]]></content>
     
     
+    <categories>
+      
+      <category>框架</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Netty</tag>
+      
+      <tag>动态代理</tag>
+      
+      <tag>序列化</tag>
+      
+    </tags>
     
   </entry>
   

@@ -4,9 +4,9 @@
   
   
   <entry>
-    <title>Linux内核进程管理</title>
-    <link href="/2022/04/19/Linux%E5%86%85%E6%A0%B8%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"/>
-    <url>/2022/04/19/Linux%E5%86%85%E6%A0%B8%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</url>
+    <title>Linux内核之系统调用</title>
+    <link href="/2022/04/19/Linux%E5%86%85%E6%A0%B8%E4%B9%8B%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/"/>
+    <url>/2022/04/19/Linux%E5%86%85%E6%A0%B8%E4%B9%8B%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/</url>
     
     <content type="html"><![CDATA[<h3 id="Linux-系统调用"><a href="#Linux-系统调用" class="headerlink" title="Linux 系统调用"></a>Linux 系统调用</h3><h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>Linux系统想要保证内核的稳定性和安全性，需要分为用户态和内核态。</p><p>用户态实现一个功能，仅仅只是一个api，具体调用需要内核来实现。但是调用api的时候可能会出现问题，会导致内核不稳定以及不安全，所以需要在用户态和内核态中间加上一层系统调用（syscall）。</p><p>现在一个架构就比较清楚了。</p><p>最上层是用户态也就是应用程序，中间一层就是系统调用，最后一层就是内核态。</p><p>换句话说，就是为了保证内核的稳定和安全，将方法抽象成一个系统调用，通过系统调用来访问内核的方法。</p><h5 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h5><figure class="highlight c"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>()[应用程序/用户态]  -----&gt; C语言库中的<span class="hljs-built_in">printf</span>() -----&gt; C库中的write() -----&gt; write()[系统调用] -----&gt; 内核态<br></code></pre></td></tr></table></figure><p>在上述说的三层结构中，可能还有存在应用程序调用库函数，那库函数其实也属于用户态。但是应用程序需要通过库函数来进行系统调用。</p><h4 id="用户态是如何进入到内核态的呢？"><a href="#用户态是如何进入到内核态的呢？" class="headerlink" title="用户态是如何进入到内核态的呢？"></a>用户态是如何进入到内核态的呢？</h4><p>答案肯定是通过系统调用，但是其中的细节呢。</p><p>通知内核的机制是<strong>软中断处理</strong>。也就是通过异常，将其陷入内核态。实际上内核来处理异常的就是系统调用，只不过是通过异常的方式。</p><p>ps：应该是异常问题都需要内核态进行处理，用户态是解决不了的，那这样就可以有一个进入内核态的入口。</p><p>用户态将访问的方法，参数，系统调用号都通过<strong>寄存器</strong>传给内核态。</p><h4 id="实现一个系统调用所需要注意的地方"><a href="#实现一个系统调用所需要注意的地方" class="headerlink" title="实现一个系统调用所需要注意的地方"></a>实现一个系统调用所需要注意的地方</h4><h5 id="系统调用号"><a href="#系统调用号" class="headerlink" title="系统调用号"></a>系统调用号</h5><p>系统调用号是<strong>唯一</strong>的。</p><p>内核记录了系统调用表中的所有已注册的系统调用的列表，存储在<strong>sys_call_table</strong>中。</p><h5 id="参数校验"><a href="#参数校验" class="headerlink" title="参数校验"></a>参数校验</h5><p>上个问题说明了可以通过异常进入到内核态。那这样不就出现内核不安全了吗？</p><p>所以系统调用的实现必须检验参数的准确性，安全性，是否威胁到内核。</p><p>最重要的一种检查就是检查用户提供的指针是否有效。如果不检查的话，那传一个没有访问权限的指针，就可以访问他访问不到的数据。就会有安全问题。</p><p>因此内核必须保证（或者说系统调用的职责，但是系统调用也属于内核）：</p><ul><li>指针指向的内存区域属于用户空间。进程绝不能哄骗内核去读内核空间的数据。</li><li>指针指向的内存区域在进程的地址空间里。进程绝不能哄骗内核去读其他进程的数据。</li><li>如果是读，该内存应该被标记为可读，如果是写，该内存应该被标记为可写。进程绝不能绕过内存访问限制。</li></ul>]]></content>
     

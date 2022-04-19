@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>二分查找</title>
+    <link href="/2022/04/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/"/>
+    <url>/2022/04/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</url>
+    
+    <content type="html"><![CDATA[<h5 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h5><p>二分查找适用于排好序的，并且时间复杂度为O(logn)。</p><p>条件。 二分查找主要是在一个区间进行查找，有两种情况，</p><ol><li><p>左闭右闭</p><p>在这种情况下， 算出mid值之后，会将原来的区间拆分成两个区间分别是【left，mid】和【mid，right】，但是两边都是闭区间，而且mid在这一轮情况中已经对比过所以正确的区间则是去掉mid。【left，mid-1】和【mid+1，right】</p></li><li><p>左闭右开</p><p>这种情况也是一样的，算出mid之后分成两个区间，【left，mid）和【mid，right）。开区间那边的是不会搜索到的。而mid在这一轮对比过，所以区间就为【left，mid）和【mid+1，right）</p></li></ol><h5 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h5><figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">searchInsert</span><span class="hljs-params">(<span class="hljs-type">int</span>[] nums, <span class="hljs-type">int</span> target)</span> &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">left</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, right = nums.length;<br>        <span class="hljs-keyword">while</span>(left&lt;right)&#123;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">mid</span> <span class="hljs-operator">=</span> left + (right-left)/<span class="hljs-number">2</span>;<br>            <span class="hljs-keyword">if</span>(target == nums[mid])&#123;<br>                <span class="hljs-keyword">return</span> target；<br>            &#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(target &gt; nums[mid])&#123;<br>                left = mid+<span class="hljs-number">1</span>;<br>            &#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(target &lt; nums[mid])&#123;<br>                right = mid;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><h4 id=""><a href="#" class="headerlink" title=""></a></h4>]]></content>
+    
+    
+    <categories>
+      
+      <category>手撕代码</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>算法</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>RPC</title>
     <link href="/2022/04/18/RPC/"/>
     <url>/2022/04/18/RPC/</url>

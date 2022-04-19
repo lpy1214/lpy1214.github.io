@@ -16,23 +16,21 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="定义调用远程计算机上的服务，就像调用本地服务一样。RPC可以很好的解耦系统。 核心流程 服务消费方（client）调用以本地调用方式调用服务。 client stub 接收到调用后负责将方法、参数等组装成能够进行网络传输的消息体。 client stub 找到服务地址，并将消息发送到服务端。 server stub 收到消息后进行解码。 server stub 根据解码结果调用本地的服务。 本地服">
+    <meta name="description" content="分析二分查找适用于排好序的，并且时间复杂度为O(logn)。 条件。 二分查找主要是在一个区间进行查找，有两种情况，  左闭右闭 在这种情况下， 算出mid值之后，会将原来的区间拆分成两个区间分别是【left，mid】和【mid，right】，但是两边都是闭区间，而且mid在这一轮情况中已经对比过所以正确的区间则是去掉mid。【left，mid-1】和【mid+1，right】  左闭右开 这种情">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RPC">
-<meta property="og:url" content="http://example.com/2022/04/18/RPC/index.html">
+<meta property="og:title" content="二分查找">
+<meta property="og:url" content="http://example.com/2022/04/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="定义调用远程计算机上的服务，就像调用本地服务一样。RPC可以很好的解耦系统。 核心流程 服务消费方（client）调用以本地调用方式调用服务。 client stub 接收到调用后负责将方法、参数等组装成能够进行网络传输的消息体。 client stub 找到服务地址，并将消息发送到服务端。 server stub 收到消息后进行解码。 server stub 根据解码结果调用本地的服务。 本地服">
+<meta property="og:description" content="分析二分查找适用于排好序的，并且时间复杂度为O(logn)。 条件。 二分查找主要是在一个区间进行查找，有两种情况，  左闭右闭 在这种情况下， 算出mid值之后，会将原来的区间拆分成两个区间分别是【left，mid】和【mid，right】，但是两边都是闭区间，而且mid在这一轮情况中已经对比过所以正确的区间则是去掉mid。【left，mid-1】和【mid+1，right】  左闭右开 这种情">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-04-18T15:45:24.000Z">
-<meta property="article:modified_time" content="2022-04-18T15:56:40.685Z">
+<meta property="article:published_time" content="2022-04-19T11:30:33.000Z">
+<meta property="article:modified_time" content="2022-04-19T11:31:42.389Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="Netty">
-<meta property="article:tag" content="动态代理">
-<meta property="article:tag" content="序列化">
+<meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary_large_image">
   
   
-  <title>RPC - Hexo</title>
+  <title>二分查找 - Hexo</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -178,7 +176,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="RPC">
+            <span class="h2" id="subtitle" title="二分查找">
               
             </span>
 
@@ -188,8 +186,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2022-04-18 23:45" pubdate>
-        2022年4月18日 晚上
+      <time datetime="2022-04-19 19:30" pubdate>
+        2022年4月19日 晚上
       </time>
     </span>
   
@@ -199,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      854 字
+      636 字
     </span>
   
 
@@ -208,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      8 分钟
+      6 分钟
     </span>
   
 
@@ -237,48 +235,22 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">RPC</h1>
+            <h1 style="display: none">二分查找</h1>
             
             <div class="markdown-body">
-              <h5 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h5><p>调用远程计算机上的服务，就像调用本地服务一样。RPC可以很好的解耦系统。</p>
-<h5 id="核心流程"><a href="#核心流程" class="headerlink" title="核心流程"></a>核心流程</h5><ol>
-<li>服务消费方（client）调用以本地调用方式调用服务。</li>
-<li>client stub 接收到调用后负责将方法、参数等组装成能够进行网络传输的消息体。</li>
-<li>client stub 找到服务地址，并将消息发送到服务端。</li>
-<li>server stub 收到消息后进行解码。</li>
-<li>server stub 根据解码结果调用本地的服务。</li>
-<li>本地服务执行并将结果返回给server stub。</li>
-<li>server stub 将返回结果打包成消息发送给消费端。</li>
-<li>服务消费放得到最终结果。</li>
-</ol>
-<h5 id="关键技术"><a href="#关键技术" class="headerlink" title="关键技术"></a>关键技术</h5><ol>
-<li><p>java的动态代理</p>
-<p>基于动态代理生成代理对象，当带哦用代理对象的方法时，由代理及逆行相关信息的组装，并发送到服务器进行远程调用，并由代理接收调用结果并返回。</p>
-<ul>
-<li>通过实现InvocationHandler接口创建自己的调用处理器</li>
-<li>通过为Proxy类指定ClassLoader对象和一组interface来创建动态代理类</li>
-<li>通过反射机制获得动态代理类的构造参数，其唯一参数类型就是调用处理器接口类型</li>
-<li>通过构造函数创建动态代理类实例，构造时调用处理器对象作为参数被传入。</li>
-</ul>
-<p>动态代理的核心是反射机制。</p>
+              <h5 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h5><p>二分查找适用于排好序的，并且时间复杂度为O(logn)。</p>
+<p>条件。 二分查找主要是在一个区间进行查找，有两种情况，</p>
+<ol>
+<li><p>左闭右闭</p>
+<p>在这种情况下， 算出mid值之后，会将原来的区间拆分成两个区间分别是【left，mid】和【mid，right】，但是两边都是闭区间，而且mid在这一轮情况中已经对比过所以正确的区间则是去掉mid。【left，mid-1】和【mid+1，right】</p>
 </li>
-<li><p>netty网络通信</p>
-</li>
-<li><p>消息序列化</p>
-<ul>
-<li><p>json 是一种轻量级的数据交换语言。json由于采用字符方式存储，占用相对于字节方式较大，并且序列化后类的信息会丢失，可能导致反序列化失败。</p>
-</li>
-<li><p>kryo 是一种快速高效的java序列化框架，旨在提供快速、高效和易用的API，无论文件、数据库或网络数据kryo都可以随时完成序列化，kryo还可以执行自动深拷贝、浅拷贝，这是对象到对象的直接拷贝，而不是对象-&gt;字节-&gt;对象的拷贝。并且序列化后体积较小。</p>
-</li>
-</ul>
+<li><p>左闭右开</p>
+<p>这种情况也是一样的，算出mid之后分成两个区间，【left，mid）和【mid，right）。开区间那边的是不会搜索到的。而mid在这一轮对比过，所以区间就为【left，mid）和【mid+1，right）</p>
 </li>
 </ol>
-<h5 id="消息协议"><a href="#消息协议" class="headerlink" title="消息协议"></a>消息协议</h5><p>magic number： 标识是一个协议包，4 bytes</p>
-<p>package number：标明是request或者是response的包，4 bytes</p>
-<p>serialize number：标明用哪一种序列化方式，4 bytes</p>
-<p>data length：数据长度，为了解决沾包问题。4 bytes</p>
-<p>data： 传输数据。</p>
+<h5 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h5><figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">searchInsert</span><span class="hljs-params">(<span class="hljs-type">int</span>[] nums, <span class="hljs-type">int</span> target)</span> &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">left</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, right = nums.length;<br>        <span class="hljs-keyword">while</span>(left&lt;right)&#123;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">mid</span> <span class="hljs-operator">=</span> left + (right-left)/<span class="hljs-number">2</span>;<br>            <span class="hljs-keyword">if</span>(target == nums[mid])&#123;<br>                <span class="hljs-keyword">return</span> target；<br>            &#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(target &gt; nums[mid])&#123;<br>                left = mid+<span class="hljs-number">1</span>;<br>            &#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(target &lt; nums[mid])&#123;<br>                right = mid;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
+<h4 id=""><a href="#" class="headerlink" title=""></a></h4>
             </div>
             <hr>
             <div>
@@ -287,7 +259,7 @@
                   <div class="post-meta mr-3">
                     <i class="iconfont icon-category"></i>
                     
-                      <a class="hover-with-bg" href="/categories/%E6%A1%86%E6%9E%B6/">框架</a>
+                      <a class="hover-with-bg" href="/categories/%E6%89%8B%E6%92%95%E4%BB%A3%E7%A0%81/">手撕代码</a>
                     
                   </div>
                 
@@ -295,11 +267,7 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/Netty/">Netty</a>
-                    
-                      <a class="hover-with-bg" href="/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">动态代理</a>
-                    
-                      <a class="hover-with-bg" href="/tags/%E5%BA%8F%E5%88%97%E5%8C%96/">序列化</a>
+                      <a class="hover-with-bg" href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
                     
                   </div>
                 
@@ -316,15 +284,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/04/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">二分查找</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2022/04/18/RPC/">
+                        <span class="hidden-mobile">RPC</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
